@@ -15,4 +15,26 @@ basically to be applied to `__init__.py` files.
 
 ## Usage
 
-TBA
+```
+noqalign [-a{+-}] [-p{+-}] [in-file] [out-file]
+```
+
+### Options
+
+- a(lign)
+
+  - `+(default)` alignes `# noqa: F401` comments to placed at the same column.
+  - `-` does not align.
+  
+- p(ut)
+
+  - `+(default)` puts `# noqa: F401` comments to every `import` lines.
+  - `-` does not put any new comment.
+
+- <in-file> specifies input filename. `-`(default) reads STDIN.
+
+- <out-file> specifies output filename.
+
+  `-` writes to STDOUT.
+  When omitted, overwrites to <in-file> itself if <in-file> is not STDIN;
+  outputs to STDOUT otherwise.
