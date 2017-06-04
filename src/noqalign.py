@@ -3,9 +3,28 @@
 import argparse
 from io import StringIO
 import re
+import sys
 
 
 __version__ = '1.0.0'
+
+
+if sys.version_info[0] < 3:
+    import codecs
+
+    def print_(o, file):
+        if file is None:
+            file = sys.stdout
+        if isinstance(o, str):
+            o = codecs.decode(o, 'utf8')
+        file.write(o)
+        file.write(u'\n')
+else:
+    def print_(o, file):
+        if file is None:
+            file = sys.stdout
+        file.write(o)
+        file.write('\n')
 
 
 class Noqalign(object):
@@ -58,8 +77,6 @@ class Noqalign(object):
 
     @classmethod
     def commandline(cls, parsed_args):
-        import sys
-
         put = parsed_args.put
         align = parsed_args.align
         infile = parsed_args.infile
@@ -112,7 +129,7 @@ class _LineWithoutImport(_Line):
         self._body = body
 
     def write(self, file, put, column):
-        print(self._body, file=file)
+        print_(self._body, file=file)
 
     @property
     def std_noqa_col(self):
@@ -140,7 +157,7 @@ class _LineWithImportWithoutNoqa(_LineWithImport):
             o = self._std_noqa(column)
         else:
             o = self._body
-        print(o, file=file)
+        print_(o, file=file)
 
 
 class _LineWithImportWithNoqa(_LineWithImport):
@@ -153,7 +170,7 @@ class _LineWithImportWithNoqa(_LineWithImport):
             o = self._std_noqa(column)
         else:
             o = self._body + self._noqa
-        print(o, file=file)
+        print_(o, file=file)
 
 
 def _parsearg(argv=None):
