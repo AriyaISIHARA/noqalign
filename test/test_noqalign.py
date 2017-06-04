@@ -14,7 +14,7 @@ class NoqalignTest(TestCase):
         a_src = _read_file('sample_a.src')
         pa_src = _read_file('sample_pa.src')
 
-        with open(_testpath(in_file)) as fin:
+        with open(_testpath(in_file), 'r') as fin:
             nql = Noqalign.from_file(fin)
         self.assertEqual(nql.applied(), pa_src)
         self.assertEqual(nql.applied(put=True), pa_src)
