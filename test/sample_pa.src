@@ -1,0 +1,57 @@
+"""noqalign sample"""
+
+import .inner_module                      # noqa: F401
+import .inner_module_with_noqa            # noqa: F401
+import .inner_module_with_other  # ignored
+import .inner_module as mdl               # noqa: F401
+import .inner_module as mdl_w_n           # noqa: F401
+import .inner_module as mdl_w_o  # ignored
+from .inner_module import Class           # noqa: F401
+from .inner_module import ClassWithNoqa   # noqa: F401
+from .inner_module import ClassWithOther  # ignored
+from .inner_module import Class as Cls    # noqa: F401
+from .inner_module import Class as ClsWN  # noqa: F401
+from .inner_module import Class as ClsWO  # ignored
+from .inner_module import (               # noqa: F401
+    ham,
+    Egg,
+    SPAM,
+)
+from .inner_module import (               # noqa: F401
+    ham,
+    Egg,
+    SPAM
+)
+from .inner_module import (  # ignored
+    ham,
+    Egg,
+    SPAM
+)
+
+import outer_module                       # noqa: F401
+import outer_module_with_noqa             # noqa: F401
+import outer_module_with_other  # ignored
+import outer_module as mdl                # noqa: F401
+import outer_module as mdl_w_n            # noqa: F401
+import outer_module as mdl_w_o  # ignored
+from outer_module import Class            # noqa: F401
+from outer_module import ClassWithNoqa    # noqa: F401
+from outer_module import ClassWithOther  # ignored
+from outer_module import Class as Cls     # noqa: F401
+from outer_module import Class as ClsWN   # noqa: F401
+from outer_module import Class as ClsWO  # ignored
+from outer_module import (                # noqa: F401
+    ham,
+    Egg,
+    SPAM,
+)
+from outer_module import (                # noqa: F401
+    ham,
+    Egg,
+    SPAM
+)
+from outer_module import (  # ignored
+    ham,
+    Egg,
+    SPAM
+)
