@@ -1,7 +1,5 @@
 # noqalign
 
-To be under development.
-
 ## Overview
 
 The present tool put and align block comments `# noqa: F401`
