@@ -29,7 +29,7 @@ class NoqalignTest(TestCase):
     def _test_cmd_stdin_stdout(self, args, output_type):
         from io import StringIO
         import sys
-        from noqalign import Noqalign, _parsearg
+        from noqalign import Noqalign
 
         stdin_org = sys.stdin
         stdout_org = sys.stdout
@@ -45,8 +45,7 @@ class NoqalignTest(TestCase):
         sys.stdout = StringIO()
         expected = _read_file('sample%s.src' % output_type)
 
-        parsed = _parsearg(args)
-        Noqalign.commandline(parsed)
+        Noqalign.commandline(args)
         self.assertEqual(sys.stdout.getvalue(), expected)
 
     def test_noqalign_cmd_stdin_stdout_pNaN(self):
@@ -63,7 +62,7 @@ class NoqalignTest(TestCase):
 
     def _test_cmd_stdin_fileout(self, args, output_type, outfile):
         import sys
-        from noqalign import Noqalign, _parsearg
+        from noqalign import Noqalign
 
         stdin_org = sys.stdin
 
@@ -76,8 +75,7 @@ class NoqalignTest(TestCase):
         sys.stdin = open(_testpath('sample.src'))
         expected = _read_file('sample%s.src' % output_type)
 
-        parsed = _parsearg(args)
-        Noqalign.commandline(parsed)
+        Noqalign.commandline(args)
         output = _read_file(outfile)
         self.assertEqual(output, expected)
 
@@ -108,7 +106,7 @@ class NoqalignTest(TestCase):
     def _test_cmd_filein_stdout(self, args, output_type):
         from io import StringIO
         import sys
-        from noqalign import Noqalign, _parsearg
+        from noqalign import Noqalign
 
         stdout_org = sys.stdout
 
@@ -120,8 +118,7 @@ class NoqalignTest(TestCase):
         sys.stdout = StringIO()
         expected = _read_file('sample%s.src' % output_type)
 
-        parsed = _parsearg(args)
-        Noqalign.commandline(parsed)
+        Noqalign.commandline(args)
         self.assertEqual(sys.stdout.getvalue(), expected)
 
     def test_noqalign_cmd_filein_stdout_pNaN(self):
@@ -142,7 +139,7 @@ class NoqalignTest(TestCase):
 
     def _test_cmd_file_overwrite(self, args, output_type, tmpfile):
         import shutil
-        from noqalign import Noqalign, _parsearg
+        from noqalign import Noqalign
 
         def cleanup():
             os.remove(_testpath(tmpfile))
@@ -151,8 +148,7 @@ class NoqalignTest(TestCase):
         expected = _read_file('sample%s.src' % output_type)
         shutil.copy(_testpath('sample.src'), _testpath(tmpfile))
 
-        parsed = _parsearg(args)
-        Noqalign.commandline(parsed)
+        Noqalign.commandline(args)
         result = _read_file(tmpfile)
         self.assertEqual(result, expected)
 

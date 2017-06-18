@@ -76,7 +76,9 @@ class Noqalign(object):
         return cls([_Line.from_str(line.rstrip('\n')) for line in file])
 
     @classmethod
-    def commandline(cls, parsed_args):
+    def commandline(cls, args):
+        parsed_args = cls._parsearg(args)
+
         put = parsed_args.put
         align = parsed_args.align
         infile = parsed_args.infile
@@ -94,6 +96,43 @@ class Noqalign(object):
         else:
             with open(outfile, 'w') as fout:
                 nql.write(put=put, align=align, file=fout)
+
+    @classmethod
+    def _parsearg(cls, args):
+        prog = "noqalign %s" % __version__
+        description = Noqalign.__doc__[10:]
+        p = argparse.ArgumentParser(prog=prog, description=description)
+        for opt in ('put', 'align'):
+            help_pos = "%ss noqa block comments(default)" % opt
+            help_neg = "does not %s noqa block comments" % opt
+            p.add_argument(
+                '-%s' % opt[0], '--%s' % opt,
+                action='store_true',
+                dest=opt,
+                default=None,
+                help=help_pos
+            )
+            p.add_argument(
+                '-%s-' % opt[0], '--%s-' % opt,
+                action='store_false',
+                dest=opt,
+                default=None,
+                help=help_neg
+            )
+        p.add_argument(
+            'infile',
+            action='store', nargs='?', default='-',
+            help="input filename; - for standard input(default)"
+        )
+        p.add_argument(
+            'outfile',
+            action='store', nargs='?', default=None,
+            help=(
+                "output filename; - for standard output"
+                " (default is <infile>)"
+            )
+        )
+        return p.parse_args(args)
 
 
 class _Line(object):
@@ -173,39 +212,11 @@ class _LineWithImportWithNoqa(_LineWithImport):
         print_(o, file=file)
 
 
-def _parsearg(argv=None):
-    prog = "noqalign %s" % __version__
-    description = Noqalign.__doc__[10:]
-    p = argparse.ArgumentParser(prog=prog, description=description)
-    for opt in ('put', 'align'):
-        help_pos = "%ss noqa block comments(default)" % opt
-        help_neg = "does not %s noqa block comments" % opt
-        p.add_argument(
-            '-%s' % opt[0], '--%s' % opt,
-            action='store_true',
-            dest=opt,
-            default=None,
-            help=help_pos
-        )
-        p.add_argument(
-            '-%s-' % opt[0], '--%s-' % opt,
-            action='store_false',
-            dest=opt,
-            default=None,
-            help=help_neg
-        )
-    p.add_argument(
-        'infile',
-        action='store', nargs='?', default='-',
-        help="input filename; - for standard input(default)"
-    )
-    p.add_argument(
-        'outfile',
-        action='store', nargs='?', default=None,
-        help="output filename; - for standard output (default is <infile>)"
-    )
-    return p.parse_args(argv)
+def main(args=None):
+    if args is None:
+        args = sys.argv[1:]
+    Noqalign.commandline(args)
 
 
 if __name__ == '__main__':
-    Noqalign.commandline(_parsearg())
+    main()
