@@ -6,7 +6,7 @@ import re
 import sys
 
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 
 if sys.version_info[0] < 3:
@@ -58,11 +58,14 @@ class Noqalign(object):
         if not align:
             return 0
         c = _LineWithImport if put else _LineWithImportWithNoqa
-        return max(
-            line.std_noqa_col
-            for line in self._lines
-            if isinstance(line, c)
-        )
+
+        result = 0
+        for line in self._lines:
+            if isinstance(line, c):
+                col = line.std_noqa_col
+                if result < col:
+                    result = col
+        return result
 
     def applied(self, put=None, align=None):
         """Wrapper of write() which returns string"""
