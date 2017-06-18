@@ -14,9 +14,13 @@ def fetch_version(fname):
 
 setup(
     name='noqalign',
-    version=fetch_version('src/noqalign.py'),
+    version=fetch_version('noqalign/noqalign.py'),
     description="put and align 'noqa F401' block comments",
     packages=find_packages(exclude=['test']),
-    package_dir={'': 'src'},
-    test_suite='test'
+    test_suite='test',
+    author="Ariya ISIHARA",
+    url="https://github.com/AriyaISIHARA",
+    entry_points=dict(
+        console_scripts='noqalign = noqalign:main'
+    )
 )
