@@ -3,16 +3,16 @@ from unittest import TestCase
 
 
 class NoqalignTest(TestCase):
-    def test_noqalign_core(self):
+    def _test_noqalign_core(self, sample_name):
         from noqalign import Noqalign
 
         self.maxDiff = None
 
-        in_file = 'sample.src'
+        in_file = '%s.src' % sample_name
         in_src = _read_file(in_file)
-        p_src = _read_file('sample_p.src')
-        a_src = _read_file('sample_a.src')
-        pa_src = _read_file('sample_pa.src')
+        p_src = _read_file('%s_p.src' % sample_name)
+        a_src = _read_file('%s_a.src' % sample_name)
+        pa_src = _read_file('%s_pa.src' % sample_name)
 
         with open(_testpath(in_file), 'r') as fin:
             nql = Noqalign.from_file(fin)
@@ -25,6 +25,12 @@ class NoqalignTest(TestCase):
         self.assertEqual(nql.applied(put=True, align=False), p_src)
         self.assertEqual(nql.applied(put=False, align=True), a_src)
         self.assertEqual(nql.applied(put=False, align=False), in_src)
+
+    def test_noqalign_core_original(self):
+        self._test_noqalign_core('sample')
+
+    def test_noqalign_core_fix_issue4(self):
+        self._test_noqalign_core('fix_issue4')
 
     def _test_cmd_stdin_stdout(self, args, output_type):
         from io import StringIO
