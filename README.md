@@ -13,6 +13,10 @@ to every line that matches to
 ```
 basically to be applied to `__init__.py` files.
 
+## History
+- 1.0.0  First release
+- 1.0.1  The bug reported in Issue #4 fixed
+
 ## Requirement
 
 python>=(2.7|3.5)
