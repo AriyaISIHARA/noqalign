@@ -10,7 +10,7 @@ from .invoke_flake8 import invoke_flake8
 
 
 logger = logging.getLogger('noqalign')
-__version__ = '1.0.1'
+__version__ = '1.1.0'
 
 
 if sys.version_info[0] < 3:
