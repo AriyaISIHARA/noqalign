@@ -22,6 +22,7 @@ basically to be applied to `__init__.py` files.
 
 - python>=(2.7|3.5)
 - flake8 (only when invoked with `--flake8` option)
+
     Noqalign, invoked with `--flake8` option, internally invokes flake8
     with `flake8 - --exit-zero` from shell.
     Thus, flake8 of a version corresponding to installed (or activated)
@@ -50,7 +51,9 @@ noqalign [-a{+-}] [-p{+-}] [-f] [in-file] [out-file]
 - f(lake8)
 
   Internally invokes flake8 to decide which line to put `# noqa: F401` comment to.
+  
   The option has no effect when `put` is inactivated.
+  
   If `flake8 - --exit-zero` cannot be invoked from shell,
   noqalign does not put any new noqa comment; behaves as `put` is inactivated.
 
