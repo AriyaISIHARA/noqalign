@@ -32,7 +32,7 @@ class NoqalignTest(TestCase):
     def test_noqalign_core_fix_issue4(self):
         self._test_noqalign_core('fix_issue4')
 
-    def _test_cmd_stdin_stdout(self, args, output_type):
+    def _test_cmd_stdin_stdout(self, args, output_type, srcname='sample'):
         from io import StringIO
         import sys
         from noqalign import Noqalign
@@ -47,9 +47,9 @@ class NoqalignTest(TestCase):
             sys.stdout = stdout_org
 
         self.addCleanup(cleanup)
-        sys.stdin = open(_testpath('sample.src'))
+        sys.stdin = open(_testpath('%s.src' % srcname))
         sys.stdout = StringIO()
-        expected = _read_file('sample%s.src' % output_type)
+        expected = _read_file('%s%s.src' % (srcname, output_type))
 
         Noqalign.commandline(args)
         self.assertEqual(sys.stdout.getvalue(), expected)
@@ -65,6 +65,12 @@ class NoqalignTest(TestCase):
 
     def test_noqalign_cmd_stdin_stdout_pFaF(self):
         self._test_cmd_stdin_stdout(['-a-', '-p-'], '')
+
+    def test_impl_issue6_pa(self):
+        self._test_cmd_stdin_stdout([], '_pa', 'impl_issue6')
+
+    def test_impl_issue6_paf(self):
+        self._test_cmd_stdin_stdout(['-f'], '_paf', 'impl_issue6')
 
     def _test_cmd_stdin_fileout(self, args, output_type, outfile):
         import sys
