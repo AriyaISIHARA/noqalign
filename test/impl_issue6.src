@@ -5,4 +5,4 @@ from os import (
 import something # already with comments
 import logging
 
-logger = logging.get_logger('noqalign')
+logger = logging.getLogger('noqalign')

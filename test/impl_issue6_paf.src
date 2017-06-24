@@ -5,4 +5,4 @@ from os import (                          # noqa: F401
 import something # already with comments  # noqa: F401
 import logging
 
-logger = logging.get_logger('noqalign')
+logger = logging.getLogger('noqalign')

@@ -2,10 +2,14 @@
 
 import argparse
 from io import StringIO
+import logging
 import re
 import sys
 
+from .invoke_flake8 import invoke_flake8
 
+
+logger = logging.getLogger('noqalign')
 __version__ = '1.0.1'
 
 
@@ -80,8 +84,15 @@ class Noqalign(object):
 
     @classmethod
     def from_file_with_flake8(cls, file):
-        # tentative
-        return cls.from_file(file)
+        lines = file.readlines()
+        line_numbers = invoke_flake8(lines)
+        return cls([
+            _LineWithImportWithoutNoqa(line.rstrip('\n').rstrip())
+            if line_numbers and (linenum in line_numbers)
+            else _Line.from_str(line.rstrip('\n'), _LineWithoutImport)
+            for linenum, line in enumerate(lines, 1)
+        ])
+        return cls(noqa_lines)
 
     @classmethod
     def commandline(cls, args):
@@ -167,7 +178,7 @@ class _Line(object):
         raise NotImplementedError("abstract method")
 
     @classmethod
-    def from_str(cls, text):
+    def from_str(cls, text, without_noqa_cls=None):
         m = re.match(
             r'(?P<body>(?:from\s+\.?\w+\s+)?'
             r'import(?:\s+\.?\w+(?:\s+as\s+\w+)?|\s*\())'
@@ -181,7 +192,7 @@ class _Line(object):
         noqa = m.group('noqa')
         if noqa:
             return _LineWithImportWithNoqa(body, noqa)
-        return _LineWithImportWithoutNoqa(body)
+        return (without_noqa_cls or _LineWithImportWithoutNoqa)(body)
 
 
 class _LineWithoutImport(_Line):
