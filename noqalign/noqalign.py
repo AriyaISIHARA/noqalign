@@ -85,14 +85,13 @@ class Noqalign(object):
     @classmethod
     def from_file_with_flake8(cls, file):
         lines = file.readlines()
-        line_numbers = invoke_flake8(lines)
+        line_numbers = invoke_flake8(''.join(lines), logger.warning)
         return cls([
             _LineWithImportWithoutNoqa(line.rstrip('\n').rstrip())
             if line_numbers and (linenum in line_numbers)
             else _Line.from_str(line.rstrip('\n'), _LineWithoutImport)
             for linenum, line in enumerate(lines, 1)
         ])
-        return cls(noqa_lines)
 
     @classmethod
     def commandline(cls, args):
