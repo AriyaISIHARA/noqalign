@@ -79,21 +79,32 @@ class Noqalign(object):
         return cls([_Line.from_str(line.rstrip('\n')) for line in file])
 
     @classmethod
+    def from_file_with_flake8(cls, file):
+        # tentative
+        return cls.from_file(file)
+
+    @classmethod
     def commandline(cls, args):
         parsed_args = cls._parsearg(args)
 
         put = parsed_args.put
         align = parsed_args.align
+        flake8 = parsed_args.flake8
         infile = parsed_args.infile
         outfile = parsed_args.outfile
+
+        if flake8:
+            constructor = cls.from_file_with_flake8
+        else:
+            constructor = cls.from_file
 
         if outfile is None:
             outfile = infile
         if infile == '-':
-            nql = cls.from_file(sys.stdin)
+            nql = constructor(sys.stdin)
         else:
             with open(infile) as fin:
-                nql = cls.from_file(fin)
+                nql = constructor(fin)
         if outfile == '-':
             nql.write(put=put, align=align)
         else:
@@ -122,6 +133,13 @@ class Noqalign(object):
                 default=None,
                 help=help_neg
             )
+        p.add_argument(
+            '-f', '--flake8',
+            action='store_true',
+            dest='flake8',
+            default=None,
+            help="invokes 'flake8' to detect lines to put noqa comment to"
+        )
         p.add_argument(
             'infile',
             action='store', nargs='?', default='-',
