@@ -2,10 +2,14 @@
 
 import argparse
 from io import StringIO
+import logging
 import re
 import sys
 
+from .invoke_flake8 import invoke_flake8
 
+
+logger = logging.getLogger('noqalign')
 __version__ = '1.0.1'
 
 
@@ -79,21 +83,38 @@ class Noqalign(object):
         return cls([_Line.from_str(line.rstrip('\n')) for line in file])
 
     @classmethod
+    def from_file_with_flake8(cls, file):
+        lines = file.readlines()
+        line_numbers = invoke_flake8(''.join(lines), logger.warning)
+        return cls([
+            _LineWithImportWithoutNoqa(line.rstrip('\n').rstrip())
+            if line_numbers and (linenum in line_numbers)
+            else _Line.from_str(line.rstrip('\n'), _LineWithoutImport)
+            for linenum, line in enumerate(lines, 1)
+        ])
+
+    @classmethod
     def commandline(cls, args):
         parsed_args = cls._parsearg(args)
 
         put = parsed_args.put
         align = parsed_args.align
+        flake8 = parsed_args.flake8
         infile = parsed_args.infile
         outfile = parsed_args.outfile
+
+        if flake8:
+            constructor = cls.from_file_with_flake8
+        else:
+            constructor = cls.from_file
 
         if outfile is None:
             outfile = infile
         if infile == '-':
-            nql = cls.from_file(sys.stdin)
+            nql = constructor(sys.stdin)
         else:
             with open(infile) as fin:
-                nql = cls.from_file(fin)
+                nql = constructor(fin)
         if outfile == '-':
             nql.write(put=put, align=align)
         else:
@@ -123,6 +144,13 @@ class Noqalign(object):
                 help=help_neg
             )
         p.add_argument(
+            '-f', '--flake8',
+            action='store_true',
+            dest='flake8',
+            default=None,
+            help="invokes 'flake8' to detect lines to put noqa comment to"
+        )
+        p.add_argument(
             'infile',
             action='store', nargs='?', default='-',
             help="input filename; - for standard input(default)"
@@ -149,7 +177,7 @@ class _Line(object):
         raise NotImplementedError("abstract method")
 
     @classmethod
-    def from_str(cls, text):
+    def from_str(cls, text, without_noqa_cls=None):
         m = re.match(
             r'(?P<body>(?:from\s+\.?\w+\s+)?'
             r'import(?:\s+\.?\w+(?:\s+as\s+\w+)?|\s*\())'
@@ -163,7 +191,7 @@ class _Line(object):
         noqa = m.group('noqa')
         if noqa:
             return _LineWithImportWithNoqa(body, noqa)
-        return _LineWithImportWithoutNoqa(body)
+        return (without_noqa_cls or _LineWithImportWithoutNoqa)(body)
 
 
 class _LineWithoutImport(_Line):

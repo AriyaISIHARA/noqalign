@@ -14,15 +14,24 @@ basically to be applied to `__init__.py` files.
 ## History
 - 1.0.0  First release
 - 1.0.1  The bug reported in Issue #4 fixed
+- 1.1.0  Implemented the option `--flake8` (Issue #6)
 
 ## Requirement
 
-python>=(2.7|3.5)
+- python>=(2.7|3.5)
+- flake8 (only when invoked with `--flake8` option)
+
+    Noqalign, invoked with `--flake8` option, internally invokes flake8
+    with `flake8 - --exit-zero` from shell.
+    Thus, flake8 of a version corresponding to installed (or activated)
+    python should be installed, or any equivalent should be
+    installed and aliased to `flake8`, so that
+    `flake8 - --exit-zero` from shell will work anyway.
 
 ## Usage
 
 ```
-noqalign [-a{+-}] [-p{+-}] [in-file] [out-file]
+noqalign [-a{+-}] [-p{+-}] [-f] [in-file] [out-file]
 ```
 
 ### Options
@@ -36,6 +45,15 @@ noqalign [-a{+-}] [-p{+-}] [in-file] [out-file]
 
   - `+(default)` puts `# noqa: F401` comments to every `import` lines.
   - `-` does not put any new comment.
+  
+- f(lake8)
+
+  Internally invokes flake8 to decide which line to put `# noqa: F401` comment to.
+  
+  The option has no effect when `put` is inactivated.
+  
+  If `flake8 - --exit-zero` cannot be invoked from shell,
+  noqalign does not put any new noqa comment; behaves as `put` is inactivated.
 
 - <in-file> specifies input filename. `-`(default) reads STDIN.
 
@@ -65,6 +83,8 @@ The tools leaves many features to be improved:
 - Support other kinds of block comments, maybe with regex
 - Support backslash stuffs
 - Support eol other than CR
+- Implement `remove` option, which removes `# noqa: F401` comments;
+    the all, or those which are unnecessary to keep flake8 silent.
 
 Any PR, especially satisfying the above issues,
 or testcases criticizing the issues, is very welcome.

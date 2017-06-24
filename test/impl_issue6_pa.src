@@ -1,0 +1,8 @@
+import sys        # noqa: F401
+from os import (  # noqa: F401
+     path,
+)
+import something # already with comments
+import logging    # noqa: F401
+
+logger = logging.getLogger('noqalign')
